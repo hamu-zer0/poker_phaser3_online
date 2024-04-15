@@ -30,7 +30,6 @@ class Card extends Phaser.GameObjects.Image {
         this.setScale(card_width*0.20);
 
         
-        //this.setDisplaySize(card_width,card_height );
         // カードをクリック可能にする
         this.setInteractive();
 
@@ -134,9 +133,6 @@ class Card_Change_Button extends Phaser.GameObjects.Text {
                     });
 
                     
-                    //const card = new Card(scene,card_width_aspect*(100+150*i), 450, cardImages[deck[how_many_card].suit][deck[how_many_card].rank],deck[how_many_card].suit,deck[how_many_card].rank,gameWidth,gameHeight);
-                    //how_many_card++;
-                    //myhands.splice(i,0,card);
                 }
             }
 
