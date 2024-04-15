@@ -117,8 +117,6 @@ io.on('connection', (socket) => {
         }
 
 
-        //console.log("opponentID: "+opponentID);
-        //console.log(gameRooms[roomName].players[0].changed_flg);
         if(gameRooms[roomName].players.length==2&&gameRooms[roomName].players[0].changed_flg==1&&gameRooms[roomName].players[1].changed_flg==1){
             console.log("結果: "+roomName);
             console.log("player1",gameRooms[roomName].players[0].hands);
