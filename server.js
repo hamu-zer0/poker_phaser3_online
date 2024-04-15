@@ -33,48 +33,6 @@ io.on('connection', (socket) => {
     // ゲームルームへの参加
     let joinedRoom = false;
     let roomName;
-    //console.log(gameRooms);
-    // ゲームルームへの参加を試みる
-    // for (const room in gameRooms) {
-    //     console.log(room);
-    //     if (gameRooms[room].players.length < MAX_PLAYERS) {
-    //         socket.join(room);
-    //         gameRooms[room].players.push({ id: playerId, hands: [],changed_flg:0 });
-    //         console.log("部屋に割り当てた");
-    //         console.log(gameRooms);
-    //         console.log(gameRooms[room].players);
-    //         joinedRoom = true;
-    //         roomName = room;
-    //         io.to(playerId).emit('joinedRoom', roomName);
-    //         // プレイヤーが接続したことを通知
-    //         io.to(playerId).emit('playerConnected', playerId);
-    //         //console.log(gameRooms[roomName]);
-    //         if(gameRooms[room].players.length==1){
-    //             create_deck(gameRooms[roomName].deck);
-    //         }
-    //         break;
-    //     }
-    // }
-
-    
-    // 新しいゲームルームを作成する
-    // if (!joinedRoom) {
-    //     roomName = `room${Object.keys(gameRooms).length + 1}`;
-    //     console.log(roomName);
-    //     socket.join(roomName);
-    //     gameRooms[roomName] = { players: [{ id: playerId, hands: [],changed_flg:0 }], deck: [] };
-    //     console.log("roomNmae="+roomName);
-    //     create_deck(gameRooms[roomName].deck);
-    //     io.to(gameRooms[roomName].players[0].id).emit('joinedRoom', roomName);
-    //     io.to(gameRooms[roomName].players[0].id).emit('playerConnected', playerId);
-    //     //console.log(playerId);
-    //     //console.log(gameRooms[roomName]);
-    //     //console.log(gameRooms[roomName].deck);
-    //     //console.log(roomName);
-    //     //console.log(gameRooms);
-    // }
-    //console.log(roomName);
-    //console.log(gameRooms[roomName]);
 
     socket.on('selectedRoom', (data) => {
         //console.log('Clicked:', data);
@@ -159,8 +117,6 @@ io.on('connection', (socket) => {
         }
 
 
-        //console.log("opponentID: "+opponentID);
-        //console.log(gameRooms[roomName].players[0].changed_flg);
         if(gameRooms[roomName].players.length==2&&gameRooms[roomName].players[0].changed_flg==1&&gameRooms[roomName].players[1].changed_flg==1){
             console.log("結果: "+roomName);
             console.log("player1",gameRooms[roomName].players[0].hands);
