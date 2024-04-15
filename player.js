@@ -282,7 +282,7 @@ socket.on('opponentHands', (hands) => {
 socket.on('opponentCardChanged',(data)=>{
     console.log("受け取った");
     const { newcard,location } = data;
-    //console.log(newcard);
+    console.log(newcard);
     //console.log(location);
     console.log("受け取った"+newcard.suit,newcard.rank);
     // カードのインスタンスを削除
