@@ -119,10 +119,10 @@ class Card_Change_Button extends Phaser.GameObjects.Text {
                     socket.emit('changeCard', { playerID, roomName,change_suit,change_rank});
                     console.log("送った"+change_suit+change_rank);
                     socket.on('cardChanged',(data)=>{
-                        console.log(data);
+                       // console.log(data);
                         const { newcard,location } = data;
-                        console.log(newcard);
-                        console.log(location);
+                        //console.log(newcard);
+                        //console.log(location);
                         console.log("受け取った"+newcard.suit,newcard.rank);
                         // カードのインスタンスを削除
                         myhands[location].destroyCard();
