@@ -228,7 +228,7 @@ function create() {
     const buttonStyle = { color: '#ffffff', fontSize: buttonSize };
 
     for(let i=1;i<=5;i++){
-    const roombutton = new Rooms(this, card_width_aspect*(100+150*3), 40+20*i,'room'+i,buttonStyle);
+    const roombutton = new Rooms(this, card_width_aspect*(100+150*3), 40+50*i,'room'+i,buttonStyle);
     rooms.push(roombutton);
     }
 
