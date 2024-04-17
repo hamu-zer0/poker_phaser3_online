@@ -19,6 +19,8 @@ for (let i = 1; i <= 5; i++) {
     gameRooms[roomName] = { players: [], deck: [] };
 }
 console.log(gameRooms);
+//roomを管理しやすいための表
+const room_table =[];
 
 io.on('connection', (socket) => {
     console.log('ユーザーが接続しました');
@@ -47,7 +49,7 @@ io.on('connection', (socket) => {
             joinedRoom = true;
             io.to(playerId).emit('joinedRoom', roomName);
             //console.log(gameRooms[roomName]);
-            if(gameRooms[roomName].players.length==1){
+            if(gameRooms[roomName].players.length==2){
                 create_deck(gameRooms[roomName].deck);
             }
         }
@@ -133,14 +135,35 @@ io.on('connection', (socket) => {
         // プレイヤーが切断されたことを通知
         io.emit('playerDisconnected', playerId);
         // ゲームルームからプレイヤーを削除
-        const currentRoom = Object.keys(socket.rooms)[1];
-        if (currentRoom && gameRooms[currentRoom]) {
-            gameRooms[currentRoom].players = gameRooms[currentRoom].players.filter((player) => player.id !== playerId);
-            if (gameRooms[currentRoom].players.length === 0) {
-                // ゲームルームが空になったら削除
-                delete gameRooms[currentRoom];
+        //const currentRoom = Object.keys(socket.rooms)[1];
+        let currentRoom = null;
+for (const roomName in gameRooms) {
+    if (gameRooms.hasOwnProperty(roomName)) {
+        const playersInRoom = gameRooms[roomName].players;
+        for (const player of playersInRoom) {
+            if (player.id === playerId) {
+                currentRoom = roomName;
+                break;
             }
         }
+        if (currentRoom) {
+            break;
+        }
+    }
+}
+        console.log(currentRoom);
+
+        if (currentRoom && gameRooms[currentRoom]) {
+            gameRooms[currentRoom].players = gameRooms[currentRoom].players.map((player) => {
+                if (player.id === playerId) {
+                    return null; // プレイヤーオブジェクトを null に設定
+                } else {
+                    return player;
+                }
+            }).filter((player) => player !== null); // null 以外のプレイヤーオブジェクトのみを残す
+        
+        }
+
         playerCount--;
     });
 });
