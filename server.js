@@ -51,6 +51,10 @@ io.on('connection', (socket) => {
             //console.log(gameRooms[roomName]);
             if(gameRooms[roomName].players.length==2){
                 create_deck(gameRooms[roomName].deck);
+                gameRooms[roomName].players.forEach(player => {
+                    io.to(player.id).emit('playersArrived');
+                });
+                //io.to(playerID).emit('playersArrived');
             }
         }
         

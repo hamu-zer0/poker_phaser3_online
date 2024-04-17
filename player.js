@@ -243,11 +243,19 @@ function create() {
         });
         // 配列を空にする
         rooms.length = 0;
-         // ボタンを作成
-    const Button = new Card_distribute_Button(this, card_width_aspect*(100+150*1), 300, '手札', buttonStyle);
-    const changebutton = new Card_Change_Button(this, card_width_aspect*(100+150*4), 300, 'チェンジ', buttonStyle);
-    distributeButton=Button;
+        
+    
     });
+
+    socket.on('playersArrived',()=>{
+         // ボタンを作成
+        const Button = new Card_distribute_Button(this, card_width_aspect*(100+150*1), 300, '手札', buttonStyle);
+        const changebutton = new Card_Change_Button(this, card_width_aspect*(100+150*4), 300, 'チェンジ', buttonStyle);
+        distributeButton=Button;
+    
+    });
+
+
     // サーバーから手札が配布されたときのイベントリスナー
 socket.on('handsDistributed', (hands) => {
     console.log('Received hands:', hands);
