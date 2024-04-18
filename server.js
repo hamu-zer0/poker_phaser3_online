@@ -111,10 +111,19 @@ io.on('connection', (socket) => {
 
             }
         }
+    });
 
+    socket.on('ChangeNothing', (data) => {
+        //console.log('Clicked:', data);
+        const { playerID, roomName,} = data;
 
-        //console.log("opponentID: "+opponentID);
-        //console.log(gameRooms[roomName].players[0].changed_flg);
+        for(let i=0;i<gameRooms[roomName].players.length;i++){
+            if(gameRooms[roomName].players[i].id==playerID){
+                console.log(gameRooms[roomName].players[i].changed_flg);
+                gameRooms[roomName].players[i].changed_flg=1;
+            }
+        }
+        
     });
 
     socket.on('ChangeCompleted', (data) => {
@@ -134,6 +143,19 @@ io.on('connection', (socket) => {
                     // // 勝敗を判定する
                     const result = determineWinner(player1HandRank, player2HandRank);
                     console.log(result);
+                    io.to(gameRooms[roomName].players[0].id).emit('opponentHands',gameRooms[roomName].players[1].hands);
+                    io.to(gameRooms[roomName].players[1].id).emit('opponentHands',gameRooms[roomName].players[0].hands);
+
+                    if(result==0){
+                        io.to(gameRooms[roomName].players[0].id).emit('resultDetermined',"You won!");
+                        io.to(gameRooms[roomName].players[1].id).emit('resultDetermined',"You lost...");
+                    }else if(result==1){
+                        io.to(gameRooms[roomName].players[0].id).emit('resultDetermined',"You lost...");
+                        io.to(gameRooms[roomName].players[1].id).emit('resultDetermined',"You won!");
+                    }else{
+                        io.to(gameRooms[roomName].players[0].id).emit('resultDetermined',"It's a tie!");
+                        io.to(gameRooms[roomName].players[1].id).emit('resultDetermined',"It's a tie!");
+                    }
         }
     });
 
@@ -331,11 +353,11 @@ function determineWinner(myrole,enemyrole) {
     let enemyHandRank=PokerHandRank[enemyrole];
     //console.log(PokerHandRank[myrole]);
     if (myHandRank > enemyHandRank) {
-        return "Player wins!";
+        return 0;
     } else if (myHandRank < enemyHandRank) {
-        return "Enemy wins!";
+        return 1;
     } else {
-        return "It's a tie!";
+        return 2;
     }
 }
 

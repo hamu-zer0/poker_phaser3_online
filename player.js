@@ -46,7 +46,7 @@ class Card extends Phaser.GameObjects.Image {
             console.log("change_flg: "+this.change_flg);
             console.log(this.width+" , "+this.height);
             this.showFrame();
-            socket.emit('cardClicked', { suit: this.suit,rank: this.rank, change_flg: this.change_flg });
+            //socket.emit('cardClicked', { suit: this.suit,rank: this.rank, change_flg: this.change_flg });
         });
 
         // カードをシーンに追加
@@ -111,6 +111,12 @@ class Card_Change_Button extends Phaser.GameObjects.Text {
         this.on('pointerdown', () => {
             console.log(`${this.text} Clicked!`);
             this.destroy();
+
+            if(myhands[0].change_flg==0&&myhands[1].change_flg==0&&myhands[2].change_flg==0&&myhands[3].change_flg==0&&myhands[4].change_flg==0){
+                socket.emit('ChangeNothing', { playerID, roomName});
+                socket.emit('ChangeCompleted', { playerID, roomName});
+            }
+
             // myhandsをループしてchange_flgを確認
             for (let i = 0; i < myhands.length; i++) {
                 console.log(`for文Card ${i + 1}: ${myhands[i].change_flg}`);
@@ -160,6 +166,18 @@ class Rooms extends Phaser.GameObjects.Text {
 
             socket.emit('selectedRoom', { playerID, roomName });
         });
+
+        // ボタンの配置を中央に調整
+        Phaser.Display.Align.In.Center(this, scene.add.zone(x, y, 1, 1));
+        
+        // ボタンをシーンに追加
+        scene.add.existing(this);
+    }
+}
+
+class ResultText extends Phaser.GameObjects.Text {
+    constructor(scene, x, y, roomName, style) {
+        super(scene, x, y, roomName, style);
 
         // ボタンの配置を中央に調整
         Phaser.Display.Align.In.Center(this, scene.add.zone(x, y, 1, 1));
@@ -251,6 +269,10 @@ function create() {
         distributeButton=Button;
     
     });
+
+    socket.on('resultDetermined',(result)=>{
+        const resulttext = new ResultText(this, card_width_aspect*(100+150*3), 40+70*3,'result: '+result ,buttonStyle);
+   });
 
 
     // サーバーから手札が配布されたときのイベントリスナー
