@@ -300,9 +300,6 @@ socket.on('handsDistributed', (hands) => {
 socket.on('opponentHands', (hands) => {
     console.log('Received opponent hands:', hands);
 
-    // handsにはサーバーから送られた手札の情報が含まれています。
-    // ここで手札を表示するための処理を追加してください。
-
     for(let i=0;i<hands.length;i++){
         // カードを生成
         const cardInfo = hands[i];
