@@ -262,6 +262,10 @@ function create() {
     
     });
 
+    socket.on('NoVacancy',(roomName)=>{
+        showPopup("No vacancy", 1000);//３秒
+   });
+
     socket.on('playersArrived',()=>{
          // ボタンを作成
         const Button = new Card_distribute_Button(this, card_width_aspect*(100+150*1), 300, '手札', buttonStyle);
@@ -324,4 +328,16 @@ socket.on('opponentCardChanged',(data)=>{
     opponentHands.splice(location,0,card);
 });
 
+}
+
+function showPopup(text, duration) {
+    const popupElement = document.getElementById("popup");
+    const popupTextElement = document.getElementById("popupText");
+  
+    popupTextElement.textContent = text;
+    popupElement.style.display = "block";
+  
+    setTimeout(() => {
+      popupElement.style.display = "none";
+    }, duration);
 }

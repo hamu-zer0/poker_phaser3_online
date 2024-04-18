@@ -56,6 +56,8 @@ io.on('connection', (socket) => {
                 });
                 //io.to(playerID).emit('playersArrived');
             }
+        }else{
+            io.to(playerId).emit('NoVacancy', roomName);
         }
         
     });
@@ -156,6 +158,9 @@ io.on('connection', (socket) => {
                         io.to(gameRooms[roomName].players[0].id).emit('resultDetermined',"It's a tie!");
                         io.to(gameRooms[roomName].players[1].id).emit('resultDetermined',"It's a tie!");
                     }
+                    gameRooms[roomName].players = [];
+                    gameRooms[roomName].deck = [];
+                    console.log(gameRooms);
         }
     });
 
