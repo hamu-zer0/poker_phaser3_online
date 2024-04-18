@@ -131,12 +131,9 @@ class Card_Change_Button extends Phaser.GameObjects.Text {
                         myhands.splice(location, 1);
                         const card = new Card(scene,card_width_aspect*(100+150*location), 450, cardImages[newcard.suit][newcard.rank],newcard.suit,newcard.rank,gameWidth,gameHeight);
                         myhands.splice(location,0,card);
+                        socket.emit('ChangeCompleted', { playerID, roomName});
                     });
 
-                    
-                    //const card = new Card(scene,card_width_aspect*(100+150*i), 450, cardImages[deck[how_many_card].suit][deck[how_many_card].rank],deck[how_many_card].suit,deck[how_many_card].rank,gameWidth,gameHeight);
-                    //how_many_card++;
-                    //myhands.splice(i,0,card);
                 }
             }
 

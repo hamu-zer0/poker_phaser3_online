@@ -60,17 +60,6 @@ io.on('connection', (socket) => {
         
     });
 
-    if (gameRooms[roomName]) {
-        //console.log("手札を配る");
-        // 手札を配布する
-        //distributeHands(gameRooms[roomName].players, io, roomName, gameRooms[roomName].deck);
-        //console.log(gameRooms[roomName].players[0].hands);
-    }
-    //console.log(gameRooms[roomName]);
-    // for(let i=0;i<gameRooms[roomName].players.length;i++){
-    //     console.log(gameRooms[roomName].players[i].hands);
-    // }
-
     // ここに cardClicked イベントの処理を追加
 
 
@@ -91,7 +80,7 @@ io.on('connection', (socket) => {
         let opponentID;
         for(let i=0;i<gameRooms[roomName].players.length;i++){
             if(gameRooms[roomName].players[i].id==playerID){
-                   
+                //gameRooms[roomName].players[i].changed_flg=1;
             }else{
                 opponentID=gameRooms[roomName].players[i].id;
                 console.log("opponentID: "+opponentID);
@@ -112,23 +101,39 @@ io.on('connection', (socket) => {
                         let location=j;
                         console.log("自分に送る",playerID);
                         io.to(playerID).emit('cardChanged',{newcard,location} );
-                        console.log("相手に送る",opponentID);
-                        io.to(opponentID).emit('opponentCardChanged',{newcard,location} );
+                        //console.log("相手に送る",opponentID);
+                        //io.to(opponentID).emit('opponentCardChanged',{newcard,location} );
+                        console.log("あいうえお");
                         console.log(gameRooms[roomName].players[i].hands);
                     }
 
                 }
-                //gameRooms[roomName].players[i].hands =drawCards(gameRooms[roomName].deck, 1);
+
             }
         }
 
 
         //console.log("opponentID: "+opponentID);
         //console.log(gameRooms[roomName].players[0].changed_flg);
+    });
+
+    socket.on('ChangeCompleted', (data) => {
+        //console.log('Clicked:', data);
+        const { playerID, roomName,} = data;
+        
         if(gameRooms[roomName].players.length==2&&gameRooms[roomName].players[0].changed_flg==1&&gameRooms[roomName].players[1].changed_flg==1){
-            console.log("結果: "+roomName);
-            console.log("player1",gameRooms[roomName].players[0].hands);
-            console.log("player2",gameRooms[roomName].players[1].hands);
+                    let player1Hand=gameRooms[roomName].players[0].hands;
+                    let player2Hand=gameRooms[roomName].players[1].hands;
+                    // 手札を判定
+                    const player1HandRank = evaluatePokerHand(player1Hand);
+                    const player2HandRank = evaluatePokerHand(player2Hand);
+                    console.log("player1",gameRooms[roomName].players[0].hands);
+                    console.log("player2",gameRooms[roomName].players[1].hands);
+                    console.log('player1 Hand:', player1HandRank);
+                    console.log('player2 Hand:', player2HandRank);
+                    // // 勝敗を判定する
+                    const result = determineWinner(player1HandRank, player2HandRank);
+                    console.log(result);
         }
     });
 
@@ -213,8 +218,8 @@ function distributeHands(players, io, roomName, deck) {
         io.to(player.id).emit('handsDistributed', player.hands);
     }
     if(players.length==2){
-        io.to(players[0].id).emit('opponentHands',players[1].hands);
-        io.to(players[1].id).emit('opponentHands',players[0].hands);
+        //io.to(players[0].id).emit('opponentHands',players[1].hands);
+        //io.to(players[1].id).emit('opponentHands',players[0].hands);
     }
 
 }
@@ -225,6 +230,114 @@ function drawCards(deck, count) {
     return drawnCards;
 }
 
+
+// カードの役を表す列挙型
+const PokerHand = {
+    HIGH_CARD: 'High Card',
+    ONE_PAIR: 'One Pair',
+    TWO_PAIR: 'Two Pair',
+    THREE_OF_A_KIND: 'Three of a Kind',
+    STRAIGHT: 'Straight',
+    FLUSH: 'Flush',
+    FULL_HOUSE: 'Full House',
+    FOUR_OF_A_KIND: 'Four of a Kind',
+    STRAIGHT_FLUSH: 'Straight Flush',
+    ROYAL_FLUSH: 'Royal Flush',
+};
+
+const PokerHandRank = {
+  'High Card': 0,
+  'One Pair': 1,
+  'Two Pair': 2,
+  'Three of a Kind': 3,
+  'Straight': 4,
+  'Flush': 5,
+  'Full House': 6,
+  'Four of a Kind': 7,
+  'Straight Flush': 8,
+  'Royal Flush': 9,
+};
+
+// 手札の役を判定する関数
+function evaluatePokerHand(cards) {
+    // カードをランクでソート
+    cards.sort((a, b) => a.rank - b.rank);
+
+    // 同じスートの枚数を格納するオブジェクト
+    const suitCount = {};
+
+    // 同じランクの枚数を格納するオブジェクト
+    const rankCount = {};
+
+    // ストレートを判定するフラグ
+    let isStraight = true;
+
+    // ストレートフラッシュを判定するフラグ
+    let isStraightFlush = true;
+
+    // ロイヤルフラッシュを判定するフラグ
+    let isRoyalFlush = false;
+
+    // 同じスートのカードの枚数と同じランクのカードの枚数を数える
+    for (const card of cards) {
+        suitCount[card.suit] = (suitCount[card.suit] || 0) + 1;
+        rankCount[card.rank] = (rankCount[card.rank] || 0) + 1;
+    }
+
+    // ストレートとストレートフラッシュの判定
+    for (let i = 1; i < cards.length; i++) {
+        if (cards[i].rank !== cards[i - 1].rank + 1) {
+            isStraight = false;
+        }
+
+        if (cards[i].suit !== cards[i - 1].suit) {
+            isStraightFlush = false;
+        }
+    }
+
+    // ロイヤルフラッシュの判定
+    if (isStraightFlush && cards[0].rank === 1 && cards[cards.length - 1].rank === 13) {
+        isRoyalFlush = true;
+    }
+
+    // 同じランクのカードの枚数に基づいて役を判定
+    const rankValues = Object.values(rankCount);
+
+    if (isRoyalFlush) {
+        return PokerHand.ROYAL_FLUSH;
+    } else if (isStraightFlush) {
+        return PokerHand.STRAIGHT_FLUSH;
+    } else if (rankValues.includes(4)) {
+        return PokerHand.FOUR_OF_A_KIND;
+    } else if (rankValues.includes(3) && rankValues.includes(2)) {
+        return PokerHand.FULL_HOUSE;
+    } else if (suitCount[cards[0].suit] === cards.length) {
+        return PokerHand.FLUSH;
+    } else if (isStraight) {
+        return PokerHand.STRAIGHT;
+    } else if (rankValues.includes(3)) {
+        return PokerHand.THREE_OF_A_KIND;
+    } else if (rankValues.filter((count) => count === 2).length === 2) {
+        return PokerHand.TWO_PAIR;
+    } else if (rankValues.includes(2)) {
+        return PokerHand.ONE_PAIR;
+    } else {
+        return PokerHand.HIGH_CARD;
+    }
+}
+
+function determineWinner(myrole,enemyrole) {
+    let myHandRank=PokerHandRank[myrole];
+    let enemyHandRank=PokerHandRank[enemyrole];
+    //console.log(PokerHandRank[myrole]);
+    if (myHandRank > enemyHandRank) {
+        return "Player wins!";
+    } else if (myHandRank < enemyHandRank) {
+        return "Enemy wins!";
+    } else {
+        return "It's a tie!";
+    }
+}
 
 
 server.listen(3000, () => {
