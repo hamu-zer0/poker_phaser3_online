@@ -85,6 +85,33 @@ class Card extends Phaser.GameObjects.Image {
         this.destroy();
     }
 }
+class OpponentCard extends Phaser.GameObjects.Image {
+    constructor(scene, x, y, texture,canvasWidth,canvasHeight) {
+        super(scene, x, y, texture);
+        const card_width=canvasWidth/standard_width;
+        
+
+        if(gameWidth>1500){
+            this.setScale(card_width*0.10);
+        }else{
+            this.setScale(card_width*0.20);
+        }
+
+        // グラフィックスオブジェクトを初期化
+        this.graphics = scene.add.graphics();
+
+
+        // カードをシーンに追加
+        scene.add.existing(this);
+
+    }
+
+    destroyCard() {
+        // カードが破棄されたときに呼ばれるメソッド
+        this.graphics.clear();
+        this.destroy();
+    }
+}
 class Card_distribute_Button extends Phaser.GameObjects.Text {
     constructor(scene, x, y, text, style) {
         super(scene, x, y, text, style);
@@ -307,7 +334,7 @@ function create() {
     });
 
     socket.on('opponentDisappear',()=>{
-         waitingtext = new WaitingText(this, card_width_aspect*(100+150*3), 40+70*2,'Opponent disappeared.\nAfter 2 seconds, rehresh the page',buttonStyle);
+         waitingtext = new WaitingText(this, card_width_aspect*(100+150*3), 40+70*2,'Opponent disappeared.\nAfter 2 seconds, refresh the page',buttonStyle);
          firstPerson_flg=1;
 
          // 3秒待ってページをリフレッシュ
@@ -318,7 +345,16 @@ function create() {
      });
 
     socket.on('resultDetermined',(result)=>{
-        const resulttext = new ResultText(this, card_width_aspect*(100+150*3), 40+70*3,'result: '+result ,buttonStyle);   
+
+        for(let i=0; i<5;i++){
+            opponentHands[i].destroyCard();
+
+        }
+        const resulttext = new ResultText(this, card_width_aspect*(100+150*3), 40+70*3,'result: '+result+'\nAfter 5 seconds, refresh the page ' ,buttonStyle);  
+        
+        setTimeout(() => {
+            location.reload();
+        }, 5000);
    });
 
 
@@ -337,7 +373,12 @@ socket.on('handsDistributed', (hands) => {
         
         console.log(card);
         myhands.push(card);
-        }
+    }
+    for(let i=0;i<hands.length;i++){
+        // カードを生成
+        const card = new OpponentCard(this,card_width_aspect*(100+150*i), 100, 'card54',gameWidth,gameHeight);
+        opponentHands.push(card);
+    }
     console.log(myhands);
 });
 
