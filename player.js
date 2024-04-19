@@ -306,8 +306,19 @@ function create() {
     
     });
 
+    socket.on('opponentDisappear',()=>{
+         waitingtext = new WaitingText(this, card_width_aspect*(100+150*3), 40+70*2,'Opponent disappeared.\nAfter 2 seconds, rehresh the page',buttonStyle);
+         firstPerson_flg=1;
+
+         // 3秒待ってページをリフレッシュ
+        setTimeout(() => {
+            location.reload();
+        }, 2000);
+
+     });
+
     socket.on('resultDetermined',(result)=>{
-        const resulttext = new ResultText(this, card_width_aspect*(100+150*3), 40+70*3,'result: '+result ,buttonStyle);
+        const resulttext = new ResultText(this, card_width_aspect*(100+150*3), 40+70*3,'result: '+result ,buttonStyle);   
    });
 
 

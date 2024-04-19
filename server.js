@@ -199,9 +199,12 @@ for (const roomName in gameRooms) {
                     return player;
                 }
             }).filter((player) => player !== null); // null 以外のプレイヤーオブジェクトのみを残す
-        
+            
+            if(gameRooms[currentRoom].players.length==1){
+                io.to(gameRooms[currentRoom].players[0].id).emit('opponentDisappear');
+            }
         }
-
+        
         playerCount--;
     });
 });
