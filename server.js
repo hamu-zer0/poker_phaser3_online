@@ -55,6 +55,8 @@ io.on('connection', (socket) => {
                     io.to(player.id).emit('playersArrived');
                 });
                 //io.to(playerID).emit('playersArrived');
+            }else{
+                io.to(playerId).emit('firstPerson');
             }
         }else{
             io.to(playerId).emit('NoVacancy', roomName);

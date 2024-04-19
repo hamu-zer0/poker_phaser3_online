@@ -175,6 +175,18 @@ class Rooms extends Phaser.GameObjects.Text {
     }
 }
 
+class WaitingText extends Phaser.GameObjects.Text {
+    constructor(scene, x, y, roomName, style) {
+        super(scene, x, y, roomName, style);
+
+        // ボタンの配置を中央に調整
+        Phaser.Display.Align.In.Center(this, scene.add.zone(x, y, 1, 1));
+        
+        // ボタンをシーンに追加
+        scene.add.existing(this);
+    }
+}
+
 class ResultText extends Phaser.GameObjects.Text {
     constructor(scene, x, y, roomName, style) {
         super(scene, x, y, roomName, style);
@@ -266,11 +278,25 @@ function create() {
         showPopup("No vacancy", 1000);//３秒
    });
 
+    let waitingtext;
+    let firstPerson_flg=0;
+    socket.on('firstPerson',()=>{
+        waitingtext = new WaitingText(this, card_width_aspect*(100+150*3), 40+70*3,'Please wait for an opponent',buttonStyle);
+        firstPerson_flg=1;
+    });
+
     socket.on('playersArrived',()=>{
          // ボタンを作成
         const Button = new Card_distribute_Button(this, card_width_aspect*(100+150*1), 300, '手札', buttonStyle);
         const changebutton = new Card_Change_Button(this, card_width_aspect*(100+150*4), 300, 'チェンジ', buttonStyle);
+        
         distributeButton=Button;
+        if(firstPerson_flg==1){
+            waitingtext.destroy();
+            firstPerson_flg=0;
+        }else{
+            firstPerson_flg=0;
+        }
     
     });
 
