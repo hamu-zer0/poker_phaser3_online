@@ -27,7 +27,13 @@ class Card extends Phaser.GameObjects.Image {
     constructor(scene, x, y, texture,suit,rank,canvasWidth,canvasHeight) {
         super(scene, x, y, texture);
         const card_width=canvasWidth/standard_width;
-        this.setScale(card_width*0.20);
+        
+
+        if(gameWidth>1500){
+            this.setScale(card_width*0.10);
+        }else{
+            this.setScale(card_width*0.20);
+        }
 
         
         //this.setDisplaySize(card_width,card_height );
@@ -317,6 +323,7 @@ socket.on('handsDistributed', (hands) => {
         const cardInfo = hands[i];
         console.log(cardInfo);
         const card = new Card(this,card_width_aspect*(100+150*i), 450, cardImages[cardInfo.suit][cardInfo.rank],cardInfo.suit, cardInfo.rank,gameWidth,gameHeight);
+        
         console.log(card);
         myhands.push(card);
         }
