@@ -64,10 +64,6 @@ io.on('connection', (socket) => {
         
     });
 
-    // ここに cardClicked イベントの処理を追加
-
-
-
 
     socket.on('distributehands', (data) => {
         //console.log('Clicked:', data);
