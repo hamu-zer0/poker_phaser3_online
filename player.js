@@ -363,7 +363,6 @@ socket.on('handsDistributed', (hands) => {
     console.log('Received hands:', hands);
     distributeButton.destroy();
     // handsにはサーバーから送られた手札の情報が含まれています。
-    // ここで手札を表示するための処理を追加してください。
 
     for(let i=0;i<hands.length;i++){
         // カードを生成

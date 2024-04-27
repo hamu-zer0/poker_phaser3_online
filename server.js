@@ -75,8 +75,6 @@ io.on('connection', (socket) => {
     socket.on('changeCard', (data) => {
         const { playerID, roomName,change_suit,change_rank } = data;
         console.log('change:'+change_suit+change_rank);
-        //console.log('Clicked:', playerID);
-        //console.log(gameRooms[roomName]);
         let opponentID;
         for(let i=0;i<gameRooms[roomName].players.length;i++){
             if(gameRooms[roomName].players[i].id==playerID){
@@ -101,9 +99,6 @@ io.on('connection', (socket) => {
                         let location=j;
                         console.log("自分に送る",playerID);
                         io.to(playerID).emit('cardChanged',{newcard,location} );
-                        //console.log("相手に送る",opponentID);
-                        //io.to(opponentID).emit('opponentCardChanged',{newcard,location} );
-                        console.log("あいうえお");
                         console.log(gameRooms[roomName].players[i].hands);
                     }
 
@@ -244,10 +239,6 @@ function distributeHands(players, io, roomName, deck) {
     // カードを配ったことを各プレイヤーに通知
     for (const player of players) {
         io.to(player.id).emit('handsDistributed', player.hands);
-    }
-    if(players.length==2){
-        //io.to(players[0].id).emit('opponentHands',players[1].hands);
-        //io.to(players[1].id).emit('opponentHands',players[0].hands);
     }
 
 }
