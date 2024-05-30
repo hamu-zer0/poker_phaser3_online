@@ -97,9 +97,9 @@ io.on('connection', (socket) => {
                         // カードを配ったことを各プレイヤーに通知
                         let newcard=newCardArray[0];
                         let location=j;
-                        console.log("自分に送る",playerID);
+                        //console.log("自分に送る",playerID);
                         io.to(playerID).emit('cardChanged',{newcard,location} );
-                        console.log(gameRooms[roomName].players[i].hands);
+                        //console.log(gameRooms[roomName].players[i].hands);
                     }
 
                 }
@@ -114,7 +114,7 @@ io.on('connection', (socket) => {
 
         for(let i=0;i<gameRooms[roomName].players.length;i++){
             if(gameRooms[roomName].players[i].id==playerID){
-                console.log(gameRooms[roomName].players[i].changed_flg);
+                //console.log(gameRooms[roomName].players[i].changed_flg);
                 gameRooms[roomName].players[i].changed_flg=1;
             }
         }
@@ -131,13 +131,13 @@ io.on('connection', (socket) => {
                     // 手札を判定
                     const player1HandRank = evaluatePokerHand(player1Hand);
                     const player2HandRank = evaluatePokerHand(player2Hand);
-                    console.log("player1",gameRooms[roomName].players[0].hands);
-                    console.log("player2",gameRooms[roomName].players[1].hands);
-                    console.log('player1 Hand:', player1HandRank);
-                    console.log('player2 Hand:', player2HandRank);
+                    //console.log("player1",gameRooms[roomName].players[0].hands);
+                    //console.log("player2",gameRooms[roomName].players[1].hands);
+                    //console.log('player1 Hand:', player1HandRank);
+                    //console.log('player2 Hand:', player2HandRank);
                     // // 勝敗を判定する
                     const result = determineWinner(player1HandRank, player2HandRank);
-                    console.log(result);
+                    //console.log(result);
                     io.to(gameRooms[roomName].players[0].id).emit('opponentHands',gameRooms[roomName].players[1].hands);
                     io.to(gameRooms[roomName].players[1].id).emit('opponentHands',gameRooms[roomName].players[0].hands);
 
@@ -233,7 +233,7 @@ function distributeHands(players, io, roomName, deck) {
     for (let i = 0; i < players.length; i++) {
         players[i].hands = drawCards(deck, 5);
     }
-    console.log("配った");
+    //console.log("配った");
     //console.log(deck);
 
     // カードを配ったことを各プレイヤーに通知

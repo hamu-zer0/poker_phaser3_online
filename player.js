@@ -36,7 +36,7 @@ class Card extends Phaser.GameObjects.Image {
         }
 
         
-        //this.setDisplaySize(card_width,card_height );
+        
         // カードをクリック可能にする
         this.setInteractive();
 
