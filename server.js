@@ -233,8 +233,6 @@ function distributeHands(players, io, roomName, deck) {
     for (let i = 0; i < players.length; i++) {
         players[i].hands = drawCards(deck, 5);
     }
-    //console.log("配った");
-    //console.log(deck);
 
     // カードを配ったことを各プレイヤーに通知
     for (const player of players) {
